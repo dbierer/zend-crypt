@@ -22,6 +22,7 @@ use Zend\Stdlib\ArrayUtils;
  */
 class Openssl implements SymmetricInterface
 {
+    // Enrico: suggest setting the default to 0: openssl_encrypt() will do PKCS7 padding internally
     const DEFAULT_PADDING = 'pkcs7';
 
     /**
@@ -89,7 +90,10 @@ class Openssl implements SymmetricInterface
         'cbc',
         'cfb',
         'ofb',
-        'ecb',
+        // This should not be offered!!!
+        //'ecb',
+        // Added this:
+        'ctr',
     ];
 
     /**
@@ -406,6 +410,7 @@ class Openssl implements SymmetricInterface
             $data,
             strtoupper($this->encryptionAlgos[$this->algo] . '-' . $this->mode),
             $this->getKey(),
+            // Enrico: if this is set to "0" openssl_encrypt() will do PKCS7 padding internally by default
             OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING,
             $iv
         );
